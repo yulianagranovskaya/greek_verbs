@@ -231,23 +231,23 @@ function showAnswer() {
   answerBlock.classList.remove('hidden');
   document.getElementById('answerButtons').classList.remove('hidden');
 
-  if (to === 'ALL') {
-	const rows = tenseFields
-	.filter(field => String(verb[field] || '').trim() !== '')
-	.map(field => `
-		<tr>
-			<td class="form-name">${escapeHtml(field)}</td>
-			<td class="form-value"><b>${escapeHtml(v[field])}</b></td>
-			</tr>
-	`)
-	.join('');
+if (to === 'ALL') {
+  const rows = tenseFields
+    .filter(field => String(verb[field] || '').trim() !== '')
+    .map(field => `
+      <tr>
+        <td class="form-name">${escapeHtml(field)}</td>
+        <td class="form-value"><b>${escapeHtml(verb[field])}</b></td>
+      </tr>
+    `)
+    .join('');
 
-    answerBlock.innerHTML = `
-      <div><b>English:</b> ${escapeHtml(verb['English'])}</div>
-      <div><b>Russian:</b> ${escapeHtml(verb['Russian'])}</div>
-      <div style="margin-top:8px;">${rows}</div>
-    `;
-  } else {
+  answerBlock.innerHTML = `
+    <div><b>English:</b> ${escapeHtml(verb['English'] || '')}</div>
+    <div><b>Russian:</b> ${escapeHtml(verb['Russian'] || '')}</div>
+    <table style="margin-top:8px;">${rows}</table>
+  `;
+} else {
     answerBlock.innerHTML = `
       <div><b>${escapeHtml(to)}:</b> ${escapeHtml(verb[to] || '')}</div>
     `;
