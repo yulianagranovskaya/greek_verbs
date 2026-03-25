@@ -180,7 +180,7 @@ function nextTrainingItem() {
   document.getElementById('answerBlock').classList.add('hidden');
   document.getElementById('answerButtons').classList.add('hidden');
 
-  document.getElementById('trainingLabel').textContent = from;
+  document.getElementById('trainingLabel').textContent = `Form: ${from}`;
   document.getElementById('trainingPrompt').textContent = verb[from];
   document.getElementById('trainingMeta').textContent = `Form from: ${from} · Level: ${verb['Level']} · Type: ${verb['Type']}`;
 }
