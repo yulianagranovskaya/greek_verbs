@@ -248,6 +248,23 @@
 		background: #eef2ff;
 	}
 	
+	.info-box {
+		display: flex;
+		align-items: flex-start;
+		gap: 10px;
+		background: #eef2ff;
+		border: 1px solid #c7d2fe;
+		padding: 10px 12px;
+		border-radius: 12px;
+		margin-bottom: 12px;
+		font-size: 12px;
+	}
+
+	.info-icon {
+		font-size: 16px;
+		line-height: 1.2;
+	}
+	
     }
   </style>
 </head>
@@ -300,6 +317,13 @@
 
     <div id="trainer" class="panel">
       <div class="card">
+	  <div class="info-box">
+		<span class="info-icon">ℹ️</span>
+		<span>
+			Select the Greek level, conjugation group, the base form of the verb,
+			and the form you want to convert it into
+		</span>
+	</div>
         <div class="grid">
           <select id="trainLevel">
             <option value="ALL">All language levels</option>
