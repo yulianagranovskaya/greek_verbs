@@ -264,11 +264,28 @@
 		font-size: 14px;
 		line-height: 1.2;
 	}
-	
-	.grid select {
-		width: auto;
-		flex: 1;
+	.training-filters {
+		display: grid;
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+		gap: 10px;
+		width: 100%;
+	}
+
+	.training-filters select {
+		width: 100%;
 		min-width: 0;
+	}
+
+	@media (max-width: 800px) {
+	.training-filters {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+	}
+
+	@media (max-width: 520px) {
+	.training-filters {
+		grid-template-columns: 1fr;
+		}
 	}
     }
   </style>
@@ -329,7 +346,7 @@
 			and the form you want to convert it into
 		</span>
 	</div>
-        <div class="grid">
+	<div class="training-filters">
           <select id="trainLevel">
             <option value="ALL">All language levels</option>
             <option value="A1">A1</option>
