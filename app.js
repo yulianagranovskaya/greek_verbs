@@ -39,6 +39,11 @@ document.getElementById('showAnswer').addEventListener('click', showAnswer);
 document.getElementById('know').addEventListener('click', () => rateAnswer(true));
 document.getElementById('dontKnow').addEventListener('click', () => rateAnswer(false));
 document.getElementById('resetStats').addEventListener('click', resetStats);
+document.getElementById('speakBtn').addEventListener('click', () => {
+  if (!currentItem) return;
+
+  speakGreek(currentItem.verb[currentItem.from]);
+});
 
 fetch('./verbs.json')
   .then(r => {
@@ -53,6 +58,32 @@ fetch('./verbs.json')
   .catch(err => {
     document.getElementById('verbList').innerHTML = `<div class="card">Could not load <b>verbs.json</b>: ${escapeHtml(err.message)}</div>`;
   });
+  
+let greekVoice = null;
+
+function loadVoices() {
+  const voices = speechSynthesis.getVoices();
+
+  greekVoice =
+    voices.find(v => v.lang === "el-GR") ||
+    voices.find(v => v.lang && v.lang.startsWith("el")) ||
+    null;
+}
+
+loadVoices();
+speechSynthesis.onvoiceschanged = loadVoices;
+
+function speakGreek(text) {
+  const clean = String(text).split(",")[0].trim();
+
+  const u = new SpeechSynthesisUtterance(clean);
+  u.lang = "el-GR";
+
+  if (greekVoice) u.voice = greekVoice;
+
+  speechSynthesis.cancel();
+  speechSynthesis.speak(u);
+}
 
 function switchTab(name) {
   document.querySelectorAll('.tab').forEach(btn => btn.classList.toggle('active', btn.dataset.tab === name));
@@ -182,7 +213,7 @@ function nextTrainingItem() {
 
   document.getElementById('trainingLabel').textContent = `Form: ${from}`;
   document.getElementById('trainingPrompt').textContent = verb[from];
-  document.getElementById('trainingMeta').textContent = `Form from: ${from} · Level: ${verb['Level']} · Type: ${verb['Type']}`;
+  document.getElementById('trainingMeta').textContent = `Level: ${verb['Level']} · Type: ${verb['Type']}`;
 }
 
 function showAnswer() {
