@@ -138,10 +138,15 @@ function renderVerbList() {
     const card = document.createElement('div');
     card.className = 'card accordion-card';
 
-    const rows = tenseFields
-      .filter(field => String(v[field] || '').trim() !== '')
-      .map(field => `<tr><th>${escapeHtml(field)}</th><td>${escapeHtml(v[field])}</td></tr>`)
-      .join('');
+	const rows = tenseFields
+	.filter(field => String(v[field] || '').trim() !== '')
+	.map(field => `
+		<tr>
+		<td class="form-name">${escapeHtml(field)}</td>
+		<td class="form-value">${escapeHtml(v[field])}</td>
+		</tr>
+	`)
+	.join('');
 
     const panelId = `verb-panel-${index}`;
 
