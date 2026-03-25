@@ -227,10 +227,15 @@ function showAnswer() {
   document.getElementById('answerButtons').classList.remove('hidden');
 
   if (to === 'ALL') {
-    const rows = tenseFields
-      .filter(f => String(verb[f] || '').trim() !== '')
-      .map(f => `<div><b>${escapeHtml(f)}:</b> ${escapeHtml(verb[f])}</div>`)
-      .join('');
+	const rows = tenseFields
+	.filter(field => String(v[field] || '').trim() !== '')
+	.map(field => `
+		<tr>
+			<td class="form-name">${escapeHtml(field)}</td>
+			<td class="form-value"><b>${escapeHtml(v[field])}</b></td>
+			</tr>
+	`)
+	.join('');
 
     answerBlock.innerHTML = `
       <div><b>English:</b> ${escapeHtml(verb['English'])}</div>
