@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Greek Verb Conjugation Trainer</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    :root {
+      --bg: #f6f7fb;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --border: #d1d5db;
+      --accent: #2563eb;
+      --accent-2: #1d4ed8;
+      --ok: #15803d;
+      --bad: #b91c1c;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding: 16px;
+    }
+
+    .app {
+      max-width: 980px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      margin: 0 0 16px;
+      font-size: 28px;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .tab, button, select, input {
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      font-size: 14px;
+    }
+
+    .tab {
+      padding: 10px 14px;
+      background: white;
+      cursor: pointer;
+    }
+
+    .tab.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: white;
+    }
+
+    .panel { display: none; }
+    .panel.active { display: block; }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px;
+      margin-bottom: 12px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    }
+
+    .grid {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      margin-bottom: 14px;
+    }
+
+    input, select, button {
+      width: 100%;
+      padding: 10px 12px;
+      background: white;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .primary {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+
+    .primary:hover { background: var(--accent-2); }
+
+    .muted { color: var(--muted); }
+
+    .sub {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+
+    .pill {
+      background: #eef2ff;
+      color: #3730a3;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 8px;
+      font-size: 14px;
+    }
+
+    th, td {
+      border-top: 1px solid var(--border);
+      padding: 8px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .question {
+      font-size: 26px;
+      font-weight: bold;
+      margin: 8px 0 12px;
+    }
+
+    .answer {
+      margin-top: 10px;
+      padding: 10px;
+      background: #f8fafc;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+    }
+
+    .row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .row > * { flex: 1; }
+
+    .hidden { display: none; }
+
+    .stats-list div {
+      margin-bottom: 6px;
+    }
+
+    .small {
+      font-size: 12px;
+    }
+
+    .accordion-card {
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .accordion-header {
+      width: 100%;
+      border: 0;
+      background: transparent;
+      padding: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      text-align: left;
+    }
+
+    .accordion-header:hover {
+      background: #f8fafc;
+    }
+
+    .accordion-main {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .accordion-title {
+      font-size: 22px;
+      font-weight: bold;
+      line-height: 1.2;
+      margin-bottom: 4px;
+      word-break: break-word;
+    }
+
+    .accordion-subtitle {
+      font-size: 13px;
+      color: var(--muted);
+      word-break: break-word;
+    }
+
+    .accordion-icon {
+      font-size: 22px;
+      color: var(--muted);
+      flex-shrink: 0;
+      transition: transform 0.2s ease;
+    }
+
+    .accordion-card.open .accordion-icon {
+      transform: rotate(180deg);
+    }
+
+    .accordion-content {
+      display: none;
+      padding: 0 14px 14px;
+      border-top: 1px solid var(--border);
+    }
+
+    .accordion-card.open .accordion-content {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <h1>Greek Verb Conjugation Trainer</h1>
+
+    <div class="tabs">
+      <button class="tab active" data-tab="verbs">Verbs</button>
+      <button class="tab" data-tab="trainer">Training</button>
+      <button class="tab" data-tab="stats">Statistics</button>
+    </div>
+
+    <div id="verbs" class="panel active">
+      <div class="card">
+        <div class="grid">
+          <input id="search" placeholder="Search by English / Russian / Greek" />
+          <select id="levelFilter">
+            <option value="ALL">All levels</option>
+            <option value="A1">A1</option>
+            <option value="A2">A2</option>
+            <option value="B1">B1</option>
+          </select>
+          <select id="typeFilter">
+            <option value="ALL">All conjugation types</option>
+            <option value="Α">Α</option>
+            <option value="ΑΒ">ΑΒ</option>
+            <option value="Β1">Β1</option>
+            <option value="Β2">Β2</option>
+            <option value="Γ1">Γ1</option>
+            <option value="Γ2">Γ2</option>
+            <option value="Γ3">Γ3</option>
+            <option value="Γ4">Γ4</option>
+          </select>
+          <select id="tenseFilter">
+            <option value="ALL">All forms</option>
+            <option value="Ενεστότας">Ενεστότας</option>
+            <option value="Αόριστος">Αόριστος</option>
+            <option value="Απλός Μέλλοντας">Απλός Μέλλοντας</option>
+            <option value="Παρατατικός">Παρατατικός</option>
+            <option value="Απλή Υποτακτική">Απλή Υποτακτική</option>
+            <option value="Προστακτική (εσύ)">Προστακτική (εσύ)</option>
+            <option value="Προστακτικύ (εσάς)">Προστακτικύ (εσάς)</option>
+          </select>
+        </div>
+        <div class="muted small">The file is expected as <b>verbs.json</b> next to this HTML file. Field names must match the column names.</div>
+      </div>
+
+      <div id="verbList"></div>
+    </div>
+
+    <div id="trainer" class="panel">
+      <div class="card">
+        <div class="grid">
+          <select id="trainLevel">
+            <option value="ALL">All levels</option>
+            <option value="A1">A1</option>
+            <option value="A2">A2</option>
+            <option value="B1">B1</option>
+          </select>
+          <select id="trainType">
+            <option value="ALL">All conjugation types</option>
+            <option value="Α">Α</option>
+            <option value="ΑΒ">ΑΒ</option>
+            <option value="Β1">Β1</option>
+            <option value="Β2">Β2</option>
+            <option value="Γ1">Γ1</option>
+            <option value="Γ2">Γ2</option>
+            <option value="Γ3">Γ3</option>
+            <option value="Γ4">Γ4</option>
+          </select>
+          <select id="trainFrom">
+            <option value="Ενεστότας">Ενεστότας</option>
+            <option value="Αόριστος">Αόριστος</option>
+            <option value="Απλός Μέλλοντας">Απλός Μέλλοντας</option>
+            <option value="Παρατατικός">Παρατατικός</option>
+            <option value="Απλή Υποτακτική">Απλή Υποτακτική</option>
+            <option value="Προστακτική (εσύ)">Προστακτική (εσύ)</option>
+            <option value="Προστακτικύ (εσάς)">Προστακτικύ (εσάς)</option>
+          </select>
+          <select id="trainTo">
+            <option value="ALL">All & Translation to Russian/English</option>
+            <option value="Ενεστότας">Ενεστότας</option>
+            <option value="Αόριστος">Αόριστος</option>
+            <option value="Απλός Μέλλοντας">Απλός Μέλλοντας</option>
+            <option value="Παρατατικός">Παρατατικός</option>
+            <option value="Απλή Υποτακτική">Απλή Υποτακτική</option>
+            <option value="Προστακτική (εσύ)">Προστακτική (εσύ)</option>
+            <option value="Προστακτικύ (εσάς)">Προστακτικύ (εσάς)</option>
+          </select>
+        </div>
+        <button id="startTraining" class="primary">Start training</button>
+      </div>
+
+      <div id="trainingCard" class="card hidden">
+        <div class="muted">Translate / recall:</div>
+        <div id="trainingPrompt" class="question"></div>
+        <div id="trainingMeta" class="muted"></div>
+
+        <div class="row" style="margin-top: 12px;">
+          <button id="showAnswer">Show answer</button>
+        </div>
+
+        <div id="answerBlock" class="answer hidden"></div>
+
+        <div id="answerButtons" class="row hidden" style="margin-top: 10px;">
+          <button id="dontKnow">I don't know</button>
+          <button id="know" class="primary">I know</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="stats" class="panel">
+      <div class="card stats-list">
+        <div>Total answers: <b id="statTotal">0</b></div>
+        <div>Known: <b id="statKnown">0</b></div>
+        <div>Unknown: <b id="statUnknown">0</b></div>
+        <div>Knowledge rate: <b id="statRate">0%</b></div>
+      </div>
+
+      <div class="card">
+        <div><b>Difficult forms</b></div>
+        <div id="hardItems" class="muted">No data yet</div>
+      </div>
+
+      <button id="resetStats">Reset statistics</button>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
