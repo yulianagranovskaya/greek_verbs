@@ -233,7 +233,7 @@ function showAnswer() {
 
   if (to === 'ALL') {
 	const rows = tenseFields
-	.filter(field => String(v[field] || '').trim() !== '')
+	.filter(field => String(verb[field] || '').trim() !== '')
 	.map(field => `
 		<tr>
 			<td class="form-name">${escapeHtml(field)}</td>
